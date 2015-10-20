@@ -1,0 +1,16 @@
+[
+{
+  "modid": "equipmentapi",
+  "name": "A custom equipment slot API",
+  "description": "Example placeholder mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["TheCodeWarrior"],
+  "credits": "Azanor for Baubles, which I used as a launching off point for creating this mod.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
