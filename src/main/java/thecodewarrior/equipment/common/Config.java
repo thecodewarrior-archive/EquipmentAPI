@@ -22,7 +22,7 @@ public class Config {
         config.load();
         
         itemRing =(new ItemRing()).setUnlocalizedName("Ring");
-		GameRegistry.registerItem(itemRing, "Ring", Baubles.MODID);        
+		GameRegistry.registerItem(itemRing, "Ring", EquipmentMod.MODID);        
         
 		splitSurvivalCreative = config.getBoolean("splitSurvivalCreative", "server", splitSurvivalCreative, "Split Baubles inventory for survival and creative game modes.");
 		

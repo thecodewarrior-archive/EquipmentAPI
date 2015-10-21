@@ -20,19 +20,19 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-@Mod(modid = Baubles.MODID, name = Baubles.MODNAME, version = Baubles.VERSION, dependencies="required-after:Forge@[10.13.2,);")
+@Mod(modid = EquipmentMod.MODID, name = EquipmentMod.MODNAME, version = EquipmentMod.VERSION, dependencies="required-after:Forge@[10.13.2,);")
 
-public class Baubles {
+public class EquipmentMod {
 	
-	public static final String MODID = "Baubles";
-	public static final String MODNAME = "Baubles";
+	public static final String MODID = "Equipment";
+	public static final String MODNAME = "Equipment";
 	public static final String VERSION = "1.0.1.10";
 
 	@SidedProxy(clientSide = "thecodewarrior.equipment.client.ClientProxy", serverSide = "thecodewarrior.equipment.common.CommonProxy")
 	public static CommonProxy proxy;
 	
-	@Instance(value=Baubles.MODID)
-	public static Baubles instance;
+	@Instance(value=EquipmentMod.MODID)
+	public static EquipmentMod instance;
 	
 	public EventHandlerEntity entityEventHandler;
 	public EventHandlerNetwork entityEventNetwork;
@@ -43,13 +43,13 @@ public class Baubles {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		event.getModMetadata().version = Baubles.VERSION;
+		event.getModMetadata().version = EquipmentMod.VERSION;
 		modDir = event.getModConfigurationDirectory();		
 		
 		try {
 			Config.initialize(event.getSuggestedConfigurationFile());
 		} catch (Exception e) {
-			Baubles.log.error("BAUBLES has a problem loading it's configuration");
+			EquipmentMod.log.error("EquipmentAPI has a problem loading it's configuration");
 		} finally {
 			if (Config.config!=null) Config.save();
 		}

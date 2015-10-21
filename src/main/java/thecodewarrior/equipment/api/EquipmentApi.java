@@ -9,14 +9,15 @@ import cpw.mods.fml.common.FMLLog;
 /**
  * @author Azanor
  */
-public class BaublesApi 
+public class EquipmentApi 
 {
 	static Method getBaubles;
+	static Method registerSlot;
 	
 	/**
-	 * Retrieves the thecodewarrior.equipment inventory for the supplied player
+	 * Retrieves the equipment inventory for the supplied player
 	 */
-	public static IInventory getBaubles(EntityPlayer player)
+	public static IInventory getEquipment(EntityPlayer player)
 	{
 		IInventory ot = null;
 		
@@ -36,6 +37,23 @@ public class BaublesApi
 	    }
 	    
 		return ot;
+	}
+	
+	public static void registerEquipment(String id, EquipmentType type) {
+		try
+	    {
+	        if(registerSlot == null) 
+	        {
+	            Class<?> fake = Class.forName("thecodewarrior.equipment.common.lib.SlotRegistry");
+	            registerSlot = fake.getMethod("registerEquipment", String.class, EquipmentType.class);
+	        }
+	        
+	        registerSlot.invoke(null, id, type);
+	    } 
+	    catch(Exception ex) 
+	    { 
+	    	FMLLog.warning("[Baubles API] Could not invoke thecodewarrior.equipment.common.lib.SlotRegistry method registerEquipment");
+	    }
 	}
 	
 }

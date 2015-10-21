@@ -16,13 +16,20 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import thecodewarrior.equipment.common.Baubles;
+import thecodewarrior.equipment.client.BasicIcon;
+import thecodewarrior.equipment.common.EquipmentMod;
 import thecodewarrior.equipment.common.container.ContainerPlayerExpanded;
+import thecodewarrior.equipment.common.container.SlotEquipment;
+import thecodewarrior.equipment.common.network.PacketHandler;
+import thecodewarrior.equipment.common.network.PacketNextPage;
+import thecodewarrior.equipment.common.network.PacketPrevPage;
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 	
 	public static final ResourceLocation background = 
-			new ResourceLocation("thecodewarrior.equipment","textures/gui/expanded_inventory.png");
+			new ResourceLocation("equipment","textures/gui/expanded_inventory.png");
+	public static final ResourceLocation slot = 
+			new ResourceLocation("equipment","textures/gui/slot.png");
     
 	/**
      * x size of the inventory window in pixels. Defined as  float, passed as int
@@ -36,9 +43,11 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public GuiPlayerExpanded(EntityPlayer player)
     {
         super(new ContainerPlayerExpanded(player.inventory, !player.worldObj.isRemote, player));
+//        this.xSize += 43;
+    	this.guiLeft += 21;
         this.allowUserInput = true;
     }
-
+    
     /**
      * Called from the main game loop to update the screen.
      */
@@ -50,7 +59,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 		} catch (Exception e) {	}
     }
 
-    
+    GuiButton nextButton, prevButton;
     
     /**
      * Adds the buttons (and other controls) to the screen in question.
@@ -59,6 +68,16 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void initGui()
     {
         this.buttonList.clear();
+        
+        this.buttonList.add(nextButton = new GuiButtonCustomTexture(
+        		10, 203, 11, 16, 18,
+        		background, new BasicIcon(256, 256, 16, 18, 203, 11), new BasicIcon(256, 256, 16, 18, 219, 11)
+        	));
+        this.buttonList.add(prevButton = new GuiButtonCustomTexture(
+        		11, 203, 29, 16, 18,
+        		background, new BasicIcon(256, 256, 16, 18, 203, 29), new BasicIcon(256, 256, 16, 18, 219, 29)
+        	));
+        
         super.initGui();
         
     }
@@ -69,7 +88,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     @Override
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_)
     {
-        this.fontRendererObj.drawString(I18n.format("container.crafting", new Object[0]), 106, 16, 4210752);
+        this.fontRendererObj.drawString(I18n.format("container.crafting", new Object[0]), 86, 16, 4210752);
     }
 
     /**
@@ -86,19 +105,31 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_)
     {
+    	nextButton.xPosition = prevButton.xPosition = this.guiLeft + 203;
+    	nextButton.yPosition = this.guiTop + 11;
+    	prevButton.yPosition = this.guiTop + 29;
+    	
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(background);
+        this.mc.getTextureManager().bindTexture( background );
         int k = this.guiLeft;
         int l = this.guiTop;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+        this.drawTexturedModalRect(k, l, 0, 0, this.xSize+27, this.ySize);
         
         for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)
         {
             Slot slot = (Slot)this.inventorySlots.inventorySlots.get(i1);
             if (slot.getHasStack() && slot.getSlotStackLimit()==1)
             {
-            	this.drawTexturedModalRect(k+slot.xDisplayPosition, l+slot.yDisplayPosition, 200, 0, 16, 16);
+            	this.drawTexturedModalRect(k+slot.xDisplayPosition, l+slot.yDisplayPosition, 0, 170, 16, 16);
             }
+        }
+        
+        for (int i = 0; i < 8; i++) {
+        	SlotEquipment s = (SlotEquipment)this.inventorySlots.getSlot(45+i);
+        	if(s != null && s.getType() != null && s.getType().getSlotOverlay(s.getStack()) != null) {
+        		this.mc.getTextureManager().bindTexture( s.getType().getSlotOverlay(s.getStack()) );
+            	this.drawTexturedModelRectFromIcon(k+s.xDisplayPosition, l+s.yDisplayPosition, BasicIcon.FULL, 16, 16);
+        	}
         }
         
         drawPlayerModel(k + 51, l + 75, 30, (float)(k + 51) - this.xSizeFloat, (float)(l + 75 - 50) - this.ySizeFloat, this.mc.thePlayer);
@@ -153,17 +184,34 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         {
             this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
         }
+        
+        if (button.id == 10) {
+        	PacketHandler.INSTANCE.sendToServer(new PacketNextPage());
+        	ContainerPlayerExpanded cpe = (ContainerPlayerExpanded)this.inventorySlots;
+        }
+        if (button.id == 11) {
+        	PacketHandler.INSTANCE.sendToServer(new PacketPrevPage());
+        	ContainerPlayerExpanded cpe = (ContainerPlayerExpanded)this.inventorySlots;
+        }
     }
 
 	@Override
 	protected void keyTyped(char par1, int par2) {
-		if (par2 == Baubles.proxy.keyHandler.key.getKeyCode())
+		if (par2 == EquipmentMod.proxy.keyHandler.key.getKeyCode())
         {
             this.mc.thePlayer.closeScreen();
         } else
 		super.keyTyped(par1, par2);
 	}
     
-    
+	/**
+     * Called when the mouse is clicked.
+     */
+    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_)
+    {
+        this.xSize += 43;
+        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+        this.xSize -= 43;
+    }
     
 }

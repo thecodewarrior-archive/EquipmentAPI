@@ -2,7 +2,7 @@ package thecodewarrior.equipment.common.items;
 
 import java.util.List;
 
-import thecodewarrior.equipment.api.BaubleType;
+import thecodewarrior.equipment.api.EquipmentClass;
 import thecodewarrior.equipment.api.IBauble;
 import thecodewarrior.equipment.common.container.InventoryBaubles;
 import thecodewarrior.equipment.common.lib.PlayerHandler;
@@ -36,7 +36,7 @@ public class ItemRing  extends Item implements IBauble
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IIconRegister ir) {
-		icon = ir.registerIcon("thecodewarrior.equipment:ring");
+		icon = ir.registerIcon("equipment:ring");
 	}
 	@SideOnly(Side.CLIENT)
 	@Override
@@ -51,8 +51,8 @@ public class ItemRing  extends Item implements IBauble
 	}
 
 	@Override
-	public BaubleType getBaubleType(ItemStack itemstack) {
-		return BaubleType.RING;
+	public EquipmentClass getBaubleType(ItemStack itemstack) {
+		return EquipmentClass.Type1;
 	}
 
 	@Override

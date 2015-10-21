@@ -3,7 +3,7 @@ package thecodewarrior.equipment.client;
 
 import thecodewarrior.equipment.client.gui.GuiEvents;
 import thecodewarrior.equipment.client.gui.GuiPlayerExpanded;
-import thecodewarrior.equipment.common.Baubles;
+import thecodewarrior.equipment.common.EquipmentMod;
 import thecodewarrior.equipment.common.CommonProxy;
 import thecodewarrior.equipment.common.event.KeyHandler;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -29,7 +29,7 @@ public class ClientProxy extends CommonProxy {
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (world instanceof WorldClient) {
 			switch (ID) {
-				case Baubles.GUI: return new GuiPlayerExpanded(player);
+				case EquipmentMod.GUI: return new GuiPlayerExpanded(player);
 			}
 		}
 		return null;

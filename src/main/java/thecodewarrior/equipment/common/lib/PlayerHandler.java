@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
-import thecodewarrior.equipment.common.Baubles;
+import thecodewarrior.equipment.common.EquipmentMod;
 import thecodewarrior.equipment.common.container.InventoryBaubles;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -53,7 +53,7 @@ public class PlayerHandler {
 
 				if (file1 == null || !file1.exists() || data == null
 						|| data.hasNoTags()) {
-					Baubles.log.warn("Data not found for "
+					EquipmentMod.log.warn("Data not found for "
 							+ player.getCommandSenderName()
 							+ ". Trying to load backup data.");
 					if (file2 != null && file2.exists()) {
@@ -78,7 +78,7 @@ public class PlayerHandler {
 						savePlayerBaubles(player, file1, file2);
 				}
 			} catch (Exception exception1) {
-				Baubles.log.fatal("Error loading thecodewarrior.equipment inventory");
+				EquipmentMod.log.fatal("Error loading thecodewarrior.equipment inventory");
 				exception1.printStackTrace();
 			}
 		}
@@ -91,7 +91,7 @@ public class PlayerHandler {
 					try {
 						Files.copy(file1, file2);
 					} catch (Exception e) {
-						Baubles.log
+						EquipmentMod.log
 								.error("Could not backup old thecodewarrior.equipment file for player "
 										+ player.getCommandSenderName());
 					}
@@ -111,7 +111,7 @@ public class PlayerHandler {
 
 					}
 				} catch (Exception e) {
-					Baubles.log.error("Could not save thecodewarrior.equipment file for player "
+					EquipmentMod.log.error("Could not save thecodewarrior.equipment file for player "
 							+ player.getCommandSenderName());
 					e.printStackTrace();
 					if (file1.exists()) {
@@ -122,7 +122,7 @@ public class PlayerHandler {
 					}
 				}
 			} catch (Exception exception1) {
-				Baubles.log.fatal("Error saving thecodewarrior.equipment inventory");
+				EquipmentMod.log.fatal("Error saving thecodewarrior.equipment inventory");
 				exception1.printStackTrace();
 			}
 		}

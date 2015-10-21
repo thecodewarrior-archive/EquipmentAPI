@@ -30,8 +30,8 @@ public class GuiEvents {
 	        	guiLeft = 160 + (event.gui.width - xSize - 200) / 2;
 	        }
 			
-			event.buttonList.add(new GuiBaublesButton(55, guiLeft + 66, guiTop + 9, 10, 10, 
-					I18n.format((event.gui instanceof GuiInventory)?"button.baubles":"button.normal", new Object[0])));
+			event.buttonList.add(new GuiBaublesButton(55, guiLeft + 68, guiTop + 68, 10, 10, 
+					I18n.format((event.gui instanceof GuiInventory)?"button.equipment":"button.normal", new Object[0])));
 		}
 		
 	}

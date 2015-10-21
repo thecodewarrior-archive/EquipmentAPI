@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import thecodewarrior.equipment.api.IBauble;
-import thecodewarrior.equipment.common.Baubles;
+import thecodewarrior.equipment.common.EquipmentMod;
 import thecodewarrior.equipment.common.Config;
 import thecodewarrior.equipment.common.container.InventoryBaubles;
 import thecodewarrior.equipment.common.lib.PlayerHandler;
@@ -107,7 +107,7 @@ public class EventHandlerEntity {
 			if (filep.exists()) {
 				try {
 					Files.copy(filep, file1);					
-					Baubles.log.info("Using and converting UUID Baubles savefile for "+player.getCommandSenderName());
+					EquipmentMod.log.info("Using and converting UUID Baubles savefile for "+player.getCommandSenderName());
 					filep.delete();
 					File fb = getPlayerFileUUID(fileNameBackup, directory, player.getGameProfile().getId().toString());
 					if (fb.exists()) fb.delete();					
@@ -117,7 +117,7 @@ public class EventHandlerEntity {
 				if (filet.exists()) {
 					try {
 						Files.copy(filet, file1);
-						Baubles.log.info("Using pre MC 1.7.10 Baubles savefile for "+player.getCommandSenderName());
+						EquipmentMod.log.info("Using pre MC 1.7.10 Baubles savefile for "+player.getCommandSenderName());
 					} catch (IOException e) {}
 				}
 			}
