@@ -23,7 +23,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = EquipmentAPITestMod.MODID, version = EquipmentAPITestMod.VERSION)
+//@Mod(modid = EquipmentAPITestMod.MODID, version = EquipmentAPITestMod.VERSION)
 public class EquipmentAPITestMod
 {
     public static final String MODID = "equipmentapitest";

@@ -3,7 +3,7 @@ package thecodewarrior.equipment.client.gui;
 import java.lang.reflect.Method;
 
 import thecodewarrior.equipment.common.network.PacketHandler;
-import thecodewarrior.equipment.common.network.PacketOpenBaublesInventory;
+import thecodewarrior.equipment.common.network.PacketOpenEquipmentInventory;
 import thecodewarrior.equipment.common.network.PacketOpenNormalInventory;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.resources.I18n;
@@ -30,7 +30,7 @@ public class GuiEvents {
 	        	guiLeft = 160 + (event.gui.width - xSize - 200) / 2;
 	        }
 			
-			event.buttonList.add(new GuiBaublesButton(55, guiLeft + 68, guiTop + 68, 10, 10, 
+			event.buttonList.add(new GuiEquipmentButton(55, guiLeft + 68, guiTop + 68, 10, 10, 
 					I18n.format((event.gui instanceof GuiInventory)?"button.equipment":"button.normal", new Object[0])));
 		}
 		
@@ -42,7 +42,7 @@ public class GuiEvents {
 
 		if (event.gui instanceof GuiInventory) {
 			if (event.button.id == 55) {
-				PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory(event.gui.mc.thePlayer));
+				PacketHandler.INSTANCE.sendToServer(new PacketOpenEquipmentInventory(event.gui.mc.thePlayer));
 			}
 		}
 		

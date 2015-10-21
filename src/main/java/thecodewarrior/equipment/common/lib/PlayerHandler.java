@@ -5,36 +5,44 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
-import thecodewarrior.equipment.common.EquipmentMod;
-import thecodewarrior.equipment.common.container.InventoryBaubles;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import thecodewarrior.equipment.common.EquipmentMod;
+import thecodewarrior.equipment.common.container.InventoryEquipment;
 
 import com.google.common.io.Files;
 
 public class PlayerHandler {
 
-	private static HashMap<String, InventoryBaubles> playerBaubles = new HashMap<String, InventoryBaubles>();
+	private static HashMap<String, InventoryEquipment> playerEquipment = new HashMap<String, InventoryEquipment>();
 
-	public static void clearPlayerBaubles(EntityPlayer player) {
-		playerBaubles.remove(player.getCommandSenderName());
+	public static void clearPlayerEquipment(EntityPlayer player) {
+		playerEquipment.remove(player.getCommandSenderName());
 	}
 
-	public static InventoryBaubles getPlayerBaubles(EntityPlayer player) {
-		if (!playerBaubles.containsKey(player.getCommandSenderName())) {
-			InventoryBaubles inventory = new InventoryBaubles(player);
-			playerBaubles.put(player.getCommandSenderName(), inventory);
+	public static InventoryEquipment getPlayerEquipmentInventory(EntityPlayer player) {
+		if (!playerEquipment.containsKey(player.getCommandSenderName())) {
+			InventoryEquipment inventory = new InventoryEquipment(player);
+			playerEquipment.put(player.getCommandSenderName(), inventory);
 		}
-		return playerBaubles.get(player.getCommandSenderName());
+		return playerEquipment.get(player.getCommandSenderName());
+	}
+	public static ItemStack getPlayerEquipment(EntityPlayer player, String id) {
+		if (!playerEquipment.containsKey(player.getCommandSenderName())) {
+			InventoryEquipment inventory = new InventoryEquipment(player);
+			playerEquipment.put(player.getCommandSenderName(), inventory);
+		}
+		return playerEquipment.get(player.getCommandSenderName()).getStackInSlot(id);
 	}
 
-	public static void setPlayerBaubles(EntityPlayer player,
-			InventoryBaubles inventory) {
-		playerBaubles.put(player.getCommandSenderName(), inventory);
+	public static void setPlayerEquipment(EntityPlayer player,
+			InventoryEquipment inventory) {
+		playerEquipment.put(player.getCommandSenderName(), inventory);
 	}
 
-	public static void loadPlayerBaubles(EntityPlayer player, File file1, File file2) {
+	public static void loadPlayerEquipment(EntityPlayer player, File file1, File file2) {
 		if (player != null && !player.worldObj.isRemote) {
 			try {
 				NBTTagCompound data = null;
@@ -71,20 +79,20 @@ public class PlayerHandler {
 				}
 
 				if (data != null) {
-					InventoryBaubles inventory = new InventoryBaubles(player);
+					InventoryEquipment inventory = new InventoryEquipment(player);
 					inventory.readNBT(data);
-					playerBaubles.put(player.getCommandSenderName(), inventory);
+					playerEquipment.put(player.getCommandSenderName(), inventory);
 					if (save)
-						savePlayerBaubles(player, file1, file2);
+						savePlayerEquipment(player, file1, file2);
 				}
 			} catch (Exception exception1) {
-				EquipmentMod.log.fatal("Error loading thecodewarrior.equipment inventory");
+				EquipmentMod.log.fatal("Error loading equipment inventory");
 				exception1.printStackTrace();
 			}
 		}
 	}
 
-	public static void savePlayerBaubles(EntityPlayer player, File file1, File file2) {
+	public static void savePlayerEquipment(EntityPlayer player, File file1, File file2) {
 		if (player != null && !player.worldObj.isRemote) {
 			try {
 				if (file1 != null && file1.exists()) {
@@ -92,14 +100,14 @@ public class PlayerHandler {
 						Files.copy(file1, file2);
 					} catch (Exception e) {
 						EquipmentMod.log
-								.error("Could not backup old thecodewarrior.equipment file for player "
+								.error("Could not backup old equipment file for player "
 										+ player.getCommandSenderName());
 					}
 				}
 
 				try {
 					if (file1 != null) {
-						InventoryBaubles inventory = getPlayerBaubles(player);
+						InventoryEquipment inventory = getPlayerEquipmentInventory(player);
 						NBTTagCompound data = new NBTTagCompound();
 						inventory.saveNBT(data);
 
@@ -111,7 +119,7 @@ public class PlayerHandler {
 
 					}
 				} catch (Exception e) {
-					EquipmentMod.log.error("Could not save thecodewarrior.equipment file for player "
+					EquipmentMod.log.error("Could not save equipment file for player "
 							+ player.getCommandSenderName());
 					e.printStackTrace();
 					if (file1.exists()) {
@@ -122,7 +130,7 @@ public class PlayerHandler {
 					}
 				}
 			} catch (Exception exception1) {
-				EquipmentMod.log.fatal("Error saving thecodewarrior.equipment inventory");
+				EquipmentMod.log.fatal("Error saving equipment inventory");
 				exception1.printStackTrace();
 			}
 		}

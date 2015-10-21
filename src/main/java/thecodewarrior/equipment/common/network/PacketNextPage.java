@@ -26,7 +26,7 @@ public class PacketNextPage implements IMessage, IMessageHandler<PacketNextPage,
 		if(c instanceof ContainerPlayerExpanded) {
 			ContainerPlayerExpanded cpe = (ContainerPlayerExpanded)c;
 			cpe.updatePage(cpe.getCurrentPage()+1);
-			return new PacketSyncDisplayedSlots(cpe.baubles.ids);
+			return new PacketSyncDisplayedSlots(cpe.equipment.ids);
 		}
 		return null;
 	}

@@ -1,5 +1,6 @@
 package thecodewarrior.equipment.common.event;
 
+import thecodewarrior.equipment.common.container.InventoryEquipment;
 import thecodewarrior.equipment.common.lib.PlayerHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -13,13 +14,14 @@ public class EventHandlerNetwork {
 	public void playerLoggedInEvent (PlayerEvent.PlayerLoggedInEvent event)    {    
 		Side side = FMLCommonHandler.instance().getEffectiveSide();        
 		if (side == Side.SERVER)        {
-			syncBaubles(event.player);
+			syncEquipment(event.player);
 		}
 	}
 	
-	public static void syncBaubles(EntityPlayer player) {
-		for (int a = 0; a < 4; a++) {
-			PlayerHandler.getPlayerBaubles(player).syncSlotToClients(a);
+	public static void syncEquipment(EntityPlayer player) {
+		InventoryEquipment i = PlayerHandler.getPlayerEquipmentInventory(player);
+		for (String key : i.stackList.keySet()) {
+			i.syncSlotToClients(key);
 		}
 	}
 	

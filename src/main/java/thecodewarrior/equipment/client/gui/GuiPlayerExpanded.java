@@ -55,7 +55,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void updateScreen()
     {
     	try {
-			((ContainerPlayerExpanded)inventorySlots).baubles.blockEvents=false;
+			((ContainerPlayerExpanded)inventorySlots).equipment.blockEvents=false;
 		} catch (Exception e) {	}
     }
 
@@ -197,7 +197,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
 	@Override
 	protected void keyTyped(char par1, int par2) {
-		if (par2 == EquipmentMod.proxy.keyHandler.key.getKeyCode())
+		if (par2 == this.mc.gameSettings.keyBindInventory.getKeyCode() || par2 == EquipmentMod.proxy.keyHandler.key.getKeyCode())
         {
             this.mc.thePlayer.closeScreen();
         } else

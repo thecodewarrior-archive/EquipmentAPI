@@ -5,14 +5,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import thecodewarrior.equipment.api.IBauble;
-import thecodewarrior.equipment.common.EquipmentMod;
-import thecodewarrior.equipment.common.Config;
-import thecodewarrior.equipment.common.container.InventoryBaubles;
-import thecodewarrior.equipment.common.lib.PlayerHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import thecodewarrior.equipment.api.IEquipment;
+import thecodewarrior.equipment.common.Config;
+import thecodewarrior.equipment.common.EquipmentMod;
+import thecodewarrior.equipment.common.container.InventoryEquipment;
+import thecodewarrior.equipment.common.lib.PlayerHandler;
 
 import com.google.common.io.Files;
 
@@ -52,12 +53,11 @@ public class EventHandlerEntity {
 				playerModes.put(player.getCommandSenderName(), player.capabilities.isCreativeMode);
 			}
 			
-			InventoryBaubles baubles = PlayerHandler.getPlayerBaubles(player);
-			for (int a = 0; a < baubles.getSizeInventory(); a++) {
-				if (baubles.getStackInSlot(a) != null
-						&& baubles.getStackInSlot(a).getItem() instanceof IBauble) {
-					((IBauble) baubles.getStackInSlot(a).getItem()).onWornTick(
-							baubles.getStackInSlot(a), player);
+			InventoryEquipment equipment = PlayerHandler.getPlayerEquipmentInventory(player);
+			for (String key : equipment.stackList.keySet()) {
+				ItemStack s = equipment.getStackInSlot(key);
+				if (s != null && s.getItem() instanceof IEquipment) {
+					((IEquipment) s.getItem()).onWornTick(s, player);
 				}
 			}
 
@@ -71,7 +71,7 @@ public class EventHandlerEntity {
 				&& !event.entity.worldObj.isRemote
 				&& !event.entity.worldObj.getGameRules()
 						.getGameRuleBooleanValue("keepInventory")) {
-			PlayerHandler.getPlayerBaubles(event.entityPlayer).dropItemsAt(
+			PlayerHandler.getPlayerEquipmentInventory(event.entityPlayer).dropItemsAt(
 					event.drops,event.entityPlayer);
 		}
 
@@ -84,7 +84,7 @@ public class EventHandlerEntity {
 	}
 	
 	private void playerLoadDo(EntityPlayer player, File directory, Boolean gamemode) {
-		PlayerHandler.clearPlayerBaubles(player);
+		PlayerHandler.clearPlayerEquipment(player);
 		
 		File file1, file2;
 		String fileName, fileNameBackup;
@@ -107,7 +107,7 @@ public class EventHandlerEntity {
 			if (filep.exists()) {
 				try {
 					Files.copy(filep, file1);					
-					EquipmentMod.log.info("Using and converting UUID Baubles savefile for "+player.getCommandSenderName());
+					EquipmentMod.log.info("Using and converting UUID Equipment savefile for "+player.getCommandSenderName());
 					filep.delete();
 					File fb = getPlayerFileUUID(fileNameBackup, directory, player.getGameProfile().getId().toString());
 					if (fb.exists()) fb.delete();					
@@ -117,14 +117,14 @@ public class EventHandlerEntity {
 				if (filet.exists()) {
 					try {
 						Files.copy(filet, file1);
-						EquipmentMod.log.info("Using pre MC 1.7.10 Baubles savefile for "+player.getCommandSenderName());
+						EquipmentMod.log.info("Using pre MC 1.7.10 Equipment savefile for "+player.getCommandSenderName());
 					} catch (IOException e) {}
 				}
 			}
 		}
 		
-		PlayerHandler.loadPlayerBaubles(player, file1, file2);
-		EventHandlerNetwork.syncBaubles(player);
+		PlayerHandler.loadPlayerEquipment(player, file1, file2);
+		EventHandlerNetwork.syncEquipment(player);
 	}
 	
 	public File getPlayerFile(String suffix, File playerDirectory, String playername)
@@ -155,12 +155,12 @@ public class EventHandlerEntity {
 	
 	private void playerSaveDo(EntityPlayer player, File directory, Boolean gamemode) {
 		if (gamemode || !Config.isSplitSurvivalCreative()) {
-			PlayerHandler.savePlayerBaubles(player, 
+			PlayerHandler.savePlayerEquipment(player, 
 					getPlayerFile("baub", directory, player.getCommandSenderName()), 
 					getPlayerFile("baubback", directory, player.getCommandSenderName()));
 		}
 		else {
-			PlayerHandler.savePlayerBaubles(player, 
+			PlayerHandler.savePlayerEquipment(player, 
 					getPlayerFile("baubs", directory, player.getCommandSenderName()), 
 					getPlayerFile("baubsback", directory, player.getCommandSenderName()));
 		}

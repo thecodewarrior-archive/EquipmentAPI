@@ -4,15 +4,18 @@ import java.lang.reflect.Method;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.FMLLog;
 
 /**
  * @author Azanor
+ * @author TheCodeWarrior
  */
 public class EquipmentApi 
 {
-	static Method getBaubles;
+	static Method getEquipmentInventory;
 	static Method registerSlot;
+	static Method getEquipmentStack;
 	
 	/**
 	 * Retrieves the equipment inventory for the supplied player
@@ -23,17 +26,39 @@ public class EquipmentApi
 		
 	    try
 	    {
-	        if(getBaubles == null) 
+	        if(getEquipmentInventory == null) 
 	        {
 	            Class<?> fake = Class.forName("thecodewarrior.equipment.common.lib.PlayerHandler");
-	            getBaubles = fake.getMethod("getPlayerBaubles", EntityPlayer.class);
+	            getEquipmentInventory = fake.getMethod("getPlayerEquipmentInventory", EntityPlayer.class);
 	        }
 	        
-	        ot = (IInventory) getBaubles.invoke(null, player);
+	        ot = (IInventory) getEquipmentInventory.invoke(null, player);
 	    } 
 	    catch(Exception ex) 
 	    { 
-	    	FMLLog.warning("[Baubles API] Could not invoke thecodewarrior.equipment.common.lib.PlayerHandler method getPlayerBaubles");
+	    	FMLLog.warning("[Equipment API] Could not invoke thecodewarrior.equipment.common.lib.PlayerHandler method getPlayerEquipmentInventory");
+	    }
+	    
+		return ot;
+	}
+	
+	public static ItemStack getEquipment(EntityPlayer player, String id)
+	{
+		ItemStack ot = null;
+		
+	    try
+	    {
+	        if(getEquipmentStack == null) 
+	        {
+	            Class<?> fake = Class.forName("thecodewarrior.equipment.common.lib.PlayerHandler");
+	            getEquipmentStack = fake.getMethod("getPlayerEquipment", EntityPlayer.class, String.class);
+	        }
+	        
+	        ot = (ItemStack) getEquipmentInventory.invoke(null, player, id);
+	    } 
+	    catch(Exception ex) 
+	    { 
+	    	FMLLog.warning("[Equipment API] Could not invoke thecodewarrior.equipment.common.lib.PlayerHandler method getPlayerEquipment");
 	    }
 	    
 		return ot;
@@ -52,7 +77,7 @@ public class EquipmentApi
 	    } 
 	    catch(Exception ex) 
 	    { 
-	    	FMLLog.warning("[Baubles API] Could not invoke thecodewarrior.equipment.common.lib.SlotRegistry method registerEquipment");
+	    	FMLLog.warning("[Equipment API] Could not invoke thecodewarrior.equipment.common.lib.SlotRegistry method registerEquipment");
 	    }
 	}
 	

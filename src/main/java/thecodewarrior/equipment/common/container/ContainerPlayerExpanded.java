@@ -1,10 +1,5 @@
 package thecodewarrior.equipment.common.container;
 
-import thecodewarrior.equipment.api.EquipmentApi;
-import thecodewarrior.equipment.api.EquipmentClass;
-import thecodewarrior.equipment.api.IBauble;
-import thecodewarrior.equipment.common.lib.PlayerHandler;
-import thecodewarrior.equipment.common.lib.SlotRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -16,6 +11,9 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import thecodewarrior.equipment.api.IEquipment;
+import thecodewarrior.equipment.common.lib.PlayerHandler;
+import thecodewarrior.equipment.common.lib.SlotRegistry;
 
 public class ContainerPlayerExpanded extends Container
 {
@@ -24,7 +22,7 @@ public class ContainerPlayerExpanded extends Container
      */
     public InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
     public IInventory craftResult = new InventoryCraftResult();
-    public InventoryBaubles baubles;
+    public InventoryEquipment equipment;
     public SlotEquipment[] slots = new SlotEquipment[8];
     /**
      * Determines if inventory manipulation should be handled.
@@ -36,10 +34,10 @@ public class ContainerPlayerExpanded extends Container
     {
         this.isLocalWorld = par2;
         this.thePlayer = player;
-        baubles = new InventoryBaubles(player);
-        baubles.setEventHandler(this);
+        equipment = new InventoryEquipment(player);
+        equipment.setEventHandler(this);
         if (!player.worldObj.isRemote) {
-        	baubles.stackList = PlayerHandler.getPlayerBaubles(player).stackList;
+        	equipment.stackList = PlayerHandler.getPlayerEquipmentInventory(player).stackList;
         }
         
         this.addSlotToContainer(new SlotCrafting(playerInv.player, this.craftMatrix, this.craftResult, 0, 144, 36));
@@ -86,7 +84,7 @@ public class ContainerPlayerExpanded extends Container
         int left = 180, top = 12, dist = 18;
         
         for(i = 0; i < 8; i++) {
-        	slots[i] = new SlotEquipment(baubles, null, i, left, top + i * dist);
+        	slots[i] = new SlotEquipment(equipment, null, i, left, top + i * dist);
         	this.addSlotToContainer(slots[i]);
         }
 
@@ -97,16 +95,16 @@ public class ContainerPlayerExpanded extends Container
     public void updatePage(int page) {
     	if(page < 0)
     		page = 0;
-    	baubles.updatePage(page);
+    	equipment.updatePage(page);
     	for(int i = 0; i < 8; i++) {
-    		slots[i].setType(SlotRegistry.getEquipment(baubles.ids[i]));
+    		slots[i].setType(SlotRegistry.getEquipment(equipment.ids[i]));
     	}
     }
     
     public void updateSlots(String[] ids) {
-    	baubles.ids = ids;
+    	equipment.ids = ids;
     	for(int i = 0; i < 8; i++) {
-    		slots[i].setType(SlotRegistry.getEquipment(baubles.ids[i]));
+    		slots[i].setType(SlotRegistry.getEquipment(equipment.ids[i]));
     	}
     }
     
@@ -144,7 +142,7 @@ public class ContainerPlayerExpanded extends Container
 
         this.craftResult.setInventorySlotContents(0, (ItemStack)null);
         if (!player.worldObj.isRemote) {
-        	PlayerHandler.setPlayerBaubles(player, baubles);
+        	PlayerHandler.setPlayerEquipment(player, equipment);
         }
     }
 
@@ -205,6 +203,7 @@ public class ContainerPlayerExpanded extends Container
 	        					s.putStack(toinsert);
 	        				}
 	        				didEquipmentFit = true;
+	        				break;
             			}
             		}
             	}
@@ -276,17 +275,17 @@ public class ContainerPlayerExpanded extends Container
         return itemstack;
     }
     
-    private void unequipBauble(ItemStack stack) {
-//    	if (stack.getItem() instanceof IBauble) {
-//    		((IBauble)stack.getItem()).onUnequipped(stack, thePlayer);
-//    	}
+    private void unequipItem(ItemStack stack) {
+    	if (stack.getItem() instanceof IEquipment) {
+    		((IEquipment)stack.getItem()).onUnequipped(stack, thePlayer);
+    	}
     }
     
     
     
     @Override
 	public void putStacksInSlots(ItemStack[] p_75131_1_) {
-		baubles.blockEvents=true;
+		equipment.blockEvents=true;
 		super.putStacksInSlots(p_75131_1_);
 	}
     
@@ -318,7 +317,7 @@ public class ContainerPlayerExpanded extends Container
                     int l = itemstack1.stackSize + par1ItemStack.stackSize;
                     if (l <= par1ItemStack.getMaxStackSize())
                     {
-                    	if (ss instanceof SlotEquipment) unequipBauble(par1ItemStack);
+                    	if (ss instanceof SlotEquipment) unequipItem(par1ItemStack);
                     	par1ItemStack.stackSize = 0;
                         itemstack1.stackSize = l;
                         slot.onSlotChanged();
@@ -326,7 +325,7 @@ public class ContainerPlayerExpanded extends Container
                     }
                     else if (itemstack1.stackSize < par1ItemStack.getMaxStackSize())
                     {
-                    	if (ss instanceof SlotEquipment) unequipBauble(par1ItemStack);
+                    	if (ss instanceof SlotEquipment) unequipItem(par1ItemStack);
                         par1ItemStack.stackSize -= par1ItemStack.getMaxStackSize() - itemstack1.stackSize;
                         itemstack1.stackSize = par1ItemStack.getMaxStackSize();
                         slot.onSlotChanged();
@@ -363,7 +362,7 @@ public class ContainerPlayerExpanded extends Container
 
                 if (itemstack1 == null)
                 {
-                	if (ss instanceof SlotEquipment) unequipBauble(par1ItemStack);
+                	if (ss instanceof SlotEquipment) unequipItem(par1ItemStack);
                     slot.putStack(par1ItemStack.copy());
                     slot.onSlotChanged();
                     par1ItemStack.stackSize = 0;

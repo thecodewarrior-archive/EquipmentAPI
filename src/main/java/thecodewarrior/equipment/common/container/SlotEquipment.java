@@ -5,7 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import thecodewarrior.equipment.api.EquipmentType;
-import thecodewarrior.equipment.api.IBauble;
+import thecodewarrior.equipment.api.IEquipment;
 
 public class SlotEquipment extends Slot
 {

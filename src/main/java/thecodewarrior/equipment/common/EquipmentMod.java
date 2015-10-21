@@ -38,7 +38,7 @@ public class EquipmentMod {
 	public EventHandlerNetwork entityEventNetwork;
 	public File modDir;
 	
-	public static final Logger log = LogManager.getLogger("Baubles");
+	public static final Logger log = LogManager.getLogger("Equipment");
 	public static final int GUI = 0;
 	
 	@EventHandler

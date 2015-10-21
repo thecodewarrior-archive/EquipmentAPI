@@ -2,16 +2,13 @@ package thecodewarrior.equipment.common;
 
 import java.io.File;
 
-import thecodewarrior.equipment.common.items.ItemRing;
-import net.minecraft.item.Item;
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 
 public class Config {
 	
 	public static Configuration config;
-	public static Item itemRing;
+//	public static Item itemRing;
 	
     // config properties
     private static boolean splitSurvivalCreative = false;
@@ -21,10 +18,10 @@ public class Config {
 		config = new Configuration(file);
         config.load();
         
-        itemRing =(new ItemRing()).setUnlocalizedName("Ring");
-		GameRegistry.registerItem(itemRing, "Ring", EquipmentMod.MODID);        
+//        itemRing =(new ItemRing()).setUnlocalizedName("Ring");
+//		GameRegistry.registerItem(itemRing, "Ring", EquipmentMod.MODID);        
         
-		splitSurvivalCreative = config.getBoolean("splitSurvivalCreative", "server", splitSurvivalCreative, "Split Baubles inventory for survival and creative game modes.");
+		splitSurvivalCreative = config.getBoolean("splitSurvivalCreative", "server", splitSurvivalCreative, "Split Equipment inventory for survival and creative game modes.");
 		
         //save it
 		config.save();

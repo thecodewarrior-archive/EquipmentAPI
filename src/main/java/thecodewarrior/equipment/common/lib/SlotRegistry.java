@@ -10,7 +10,7 @@ import thecodewarrior.equipment.api.EquipmentType;
 public class SlotRegistry {
 
 	static SortedMap<String, EquipmentType> equipment = new TreeMap<String, EquipmentType>();
-	static List<String> sortedIDs;
+	static List<String> sortedIDs = new ArrayList<String>();
 	
 	public static void registerEquipment(String id, EquipmentType type) {
 		if(id == null || id.length() == 0)

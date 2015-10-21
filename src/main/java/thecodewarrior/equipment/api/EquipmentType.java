@@ -4,6 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * @author TheCodeWarrior
+ */
 public abstract class EquipmentType {
 
 	public abstract boolean canPlaceStack(ItemStack stack);

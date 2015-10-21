@@ -14,20 +14,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
-import thecodewarrior.equipment.api.IBauble;
+import thecodewarrior.equipment.api.IEquipment;
 import thecodewarrior.equipment.common.EquipmentMod;
 import thecodewarrior.equipment.common.lib.SlotRegistry;
 import thecodewarrior.equipment.common.network.PacketHandler;
-import thecodewarrior.equipment.common.network.PacketSyncBauble;
+import thecodewarrior.equipment.common.network.PacketSyncEquipment;
 
-public class InventoryBaubles implements IInventory {
+public class InventoryEquipment implements IInventory {
 	public Map<String, ItemStack> stackList;
 	public String[] ids;
 	private Container eventHandler;
 	public WeakReference<EntityPlayer> player;
 	public boolean blockEvents=false;
 
-	public InventoryBaubles(EntityPlayer player) {
+	public InventoryEquipment(EntityPlayer player) {
 		this.stackList = new HashMap<String, ItemStack>();
 		this.ids = new String[8];
 		updatePage(0);
@@ -47,7 +47,7 @@ public class InventoryBaubles implements IInventory {
 	 */
 	@Override
 	public int getSizeInventory() {
-		return this.stackList.size();
+		return 8;
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class InventoryBaubles implements IInventory {
 	 */
 	@Override
 	public ItemStack getStackInSlot(int par1) {
-		return par1 >= this.getSizeInventory() ? null : this.stackList.get(ids[par1]);
+		return this.stackList.get(ids[par1]);
 	}
 	/**
 	 * Returns the stack in slot i
@@ -116,8 +116,8 @@ public class InventoryBaubles implements IInventory {
 			if (this.stackList.get(ids[par1]).stackSize <= par2) {
 				itemstack = this.stackList.get(ids[par1]);
 
-				if (itemstack != null && itemstack.getItem() instanceof IBauble) {
-					((IBauble) itemstack.getItem()).onUnequipped(itemstack,
+				if (itemstack != null && itemstack.getItem() instanceof IEquipment) {
+					((IEquipment) itemstack.getItem()).onUnequipped(itemstack,
 							player.get());
 				}
 				
@@ -130,8 +130,8 @@ public class InventoryBaubles implements IInventory {
 			} else {
 				itemstack = this.stackList.get(ids[par1]).splitStack(par2);
 				
-				if (itemstack != null && itemstack.getItem() instanceof IBauble) {
-					((IBauble) itemstack.getItem()).onUnequipped(itemstack,
+				if (itemstack != null && itemstack.getItem() instanceof IEquipment) {
+					((IEquipment) itemstack.getItem()).onUnequipped(itemstack,
 							player.get());
 				}
 				
@@ -279,11 +279,11 @@ public class InventoryBaubles implements IInventory {
 	}
 	
 	public void dropItemsAt(ArrayList<EntityItem> drops, Entity e) {
-		for (int i = 0; i < 4; ++i) {
-			if (this.stackList.get(ids[i]) != null) {
+		for (String id : this.stackList.keySet()) {
+			if (this.stackList.get(id) != null) {
 				EntityItem ei = new EntityItem(e.worldObj,
 						e.posX, e.posY + e.getEyeHeight(), e.posZ,
-						this.stackList.get(ids[i]).copy());
+						this.stackList.get(id).copy());
 				ei.delayBeforeCanPickup = 40;
 				float f1 = e.worldObj.rand.nextFloat() * 0.5F;
 				float f2 = e.worldObj.rand.nextFloat() * (float) Math.PI * 2.0F;
@@ -291,20 +291,22 @@ public class InventoryBaubles implements IInventory {
 				ei.motionZ = (double) (MathHelper.cos(f2) * f1);
 				ei.motionY = 0.20000000298023224D;
 				drops.add(ei);
-				this.stackList.put(ids[i], null);
-				syncSlotToClients(i);
+				this.stackList.put(id, null);
+				syncSlotToClients(id);
 			}
 		}
 	}
-
-	public void syncSlotToClients(int slot) {
+	public void syncSlotToClients(String slot) {
 		try {
-			if (EquipmentMod.proxy.getClientWorld() == null && ids[slot] != null) {
-				PacketHandler.INSTANCE.sendToAll(new PacketSyncBauble(player
-						.get(), ids[slot]));
+			if (EquipmentMod.proxy.getClientWorld() == null && slot != null) {
+				PacketHandler.INSTANCE.sendToAll(new PacketSyncEquipment(player
+						.get(), slot));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void syncSlotToClients(int slot) {
+		syncSlotToClients(ids[slot]);
 	}
 }
