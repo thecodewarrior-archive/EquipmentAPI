@@ -28,7 +28,7 @@ public class PacketSyncEquipment implements IMessage, IMessageHandler<PacketSync
 	
 	public PacketSyncEquipment(EntityPlayer player, String slot) {
 		this.slot = slot;
-		this.item = PlayerHandler.getPlayerEquipmentInventory(player).getStackInSlot(slot);
+		this.item = PlayerHandler.getPlayerEquipmentInventory(player).getStack(slot);
 		this.playerId = player.getEntityId();
 	}
 
@@ -57,7 +57,7 @@ public class PacketSyncEquipment implements IMessage, IMessageHandler<PacketSync
 		Entity p = world.getEntityByID(message.playerId);
 		if (p !=null && p instanceof EntityPlayer) {
 			InventoryEquipment i = PlayerHandler.getPlayerEquipmentInventory((EntityPlayer) p);
-			i.stackList.put(message.slot, message.item);
+			i.setStack(message.slot, message.item);
 		}
 		return null;
 	}

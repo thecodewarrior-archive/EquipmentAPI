@@ -1,4 +1,4 @@
-package com.thecodewarrior.equipment;
+package test.thecodewarrior.equipment;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -23,7 +23,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-//@Mod(modid = EquipmentAPITestMod.MODID, version = EquipmentAPITestMod.VERSION)
+@Mod(modid = EquipmentAPITestMod.MODID, version = EquipmentAPITestMod.VERSION)
 public class EquipmentAPITestMod
 {
     public static final String MODID = "equipmentapitest";
@@ -53,7 +53,12 @@ public class EquipmentAPITestMod
 			
 			@Override
 			public int getStackLimit() {
-				return 5;
+				return 64;
+			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Blocks";
 			}
 		});
 		
@@ -80,6 +85,11 @@ public class EquipmentAPITestMod
 			public int getStackLimit() {
 				return 1;
 			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Armor";
+			}
 		});
 		
 		EquipmentApi.registerEquipment(EquipmentAPITestMod.MODID + ":type_tool", new EquipmentType() {
@@ -105,6 +115,11 @@ public class EquipmentAPITestMod
 			public int getStackLimit() {
 				return 1;
 			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Tools";
+			}
 		});
 		
 		EquipmentApi.registerEquipment(EquipmentAPITestMod.MODID + ":type_dye", new EquipmentType() {
@@ -128,7 +143,12 @@ public class EquipmentAPITestMod
 			
 			@Override
 			public int getStackLimit() {
-				return 1;
+				return 16;
+			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Dye";
 			}
 		});
 		
@@ -153,7 +173,12 @@ public class EquipmentAPITestMod
 			
 			@Override
 			public int getStackLimit() {
-				return 1;
+				return 32;
+			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Food";
 			}
 		});
 		
@@ -180,6 +205,11 @@ public class EquipmentAPITestMod
 			public int getStackLimit() {
 				return 1;
 			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Book";
+			}
 		});
 
 		EquipmentApi.registerEquipment(EquipmentAPITestMod.MODID + ":type_bucket", new EquipmentType() {
@@ -204,6 +234,11 @@ public class EquipmentAPITestMod
 			@Override
 			public int getStackLimit() {
 				return 1;
+			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Bucket";
 			}
 		});
 		
@@ -230,6 +265,11 @@ public class EquipmentAPITestMod
 			public int getStackLimit() {
 				return 1;
 			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Bow";
+			}
 		});
 		
 		EquipmentApi.registerEquipment(EquipmentAPITestMod.MODID + ":type_egg", new EquipmentType() {
@@ -253,7 +293,12 @@ public class EquipmentAPITestMod
 			
 			@Override
 			public int getStackLimit() {
-				return 1;
+				return 16;
+			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Eggs!";
 			}
 		});
 		
@@ -278,7 +323,12 @@ public class EquipmentAPITestMod
 			
 			@Override
 			public int getStackLimit() {
-				return 1;
+				return 64;
+			}
+
+			@Override
+			public String getSlotDescription(EntityPlayer player) {
+				return "Arrows";
 			}
 		});
     }

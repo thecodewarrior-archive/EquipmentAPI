@@ -2,8 +2,11 @@ package thecodewarrior.equipment.common.container;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -21,19 +24,52 @@ import thecodewarrior.equipment.common.network.PacketHandler;
 import thecodewarrior.equipment.common.network.PacketSyncEquipment;
 
 public class InventoryEquipment implements IInventory {
-	public Map<String, ItemStack> stackList;
+	private Map<String, ItemStack> stackMap;
 	public String[] ids;
 	private Container eventHandler;
 	public WeakReference<EntityPlayer> player;
 	public boolean blockEvents=false;
 
 	public InventoryEquipment(EntityPlayer player) {
-		this.stackList = new HashMap<String, ItemStack>();
+		this.stackMap = new HashMap<String, ItemStack>();
 		this.ids = new String[8];
 		updatePage(0);
 		this.player = new WeakReference<EntityPlayer>(player);
 	}
 
+	/**
+	 * INTERNAL USE ONLY - use {@code setStack(id, stack)} to set values
+	 * 
+	 * Sets the stack map to the provided map
+	 * @param map
+	 */
+	public void setStackMap(Map<String, ItemStack> map) {
+		Map<String, ItemStack> old = stackMap;
+		stackMap = map;
+		Set<String> keys = new HashSet<String>(map.keySet());
+		keys.addAll(old.keySet());
+		for(String key : keys) {
+			SlotRegistry.getEquipment(key).onChange(old.get(key), map.get(key), player.get());
+		}
+	}
+	
+	/**
+	 * Gets an un-modifiable reference to the stack map 
+	 * @return
+	 */
+	public Map<String, ItemStack> getStackMap() {
+		return Collections.unmodifiableMap(stackMap);
+	}
+	
+	/**
+	 * INTERNAL USE ONLY - use {@code setStack(id, stack)} to set values<br><br>
+	 * Gets the modifiable reference to the stack map
+	 * @return
+	 */
+	public Map<String, ItemStack> getRawStackMap() {
+		return stackMap;
+	}
+	
 	public Container getEventHandler() {
 		return eventHandler;
 	}
@@ -41,9 +77,30 @@ public class InventoryEquipment implements IInventory {
 	public void setEventHandler(Container eventHandler) {
 		this.eventHandler = eventHandler;
 	}
-
+	
+	
 	/**
-	 * Returns the number of slots in the inventory.
+	 * Sets the stack at the provided id.
+	 * @param id
+	 * @param stack
+	 */
+	public void setStack(String id, ItemStack stack) {
+		ItemStack oldStack = stackMap.get(id);
+		stackMap.put(id, stack);
+		SlotRegistry.getEquipment(id).onChange(oldStack, stack, player.get());
+	}
+	
+	/**
+	 * Gets the stack at the provided id
+	 * @param id
+	 * @return
+	 */
+	public ItemStack getStack(String id) {
+		return this.stackMap.get(id);
+	}
+	
+	/**
+	 * INTERNAL USE ONLY - Use {@code getStackMap().keySet()} to iterate over the slots
 	 */
 	@Override
 	public int getSizeInventory() {
@@ -51,17 +108,11 @@ public class InventoryEquipment implements IInventory {
 	}
 
 	/**
-	 * Returns the stack in slot i
+	 * INTERNAL USE ONLY - Use {@code getStack(id)} to get values
 	 */
 	@Override
 	public ItemStack getStackInSlot(int par1) {
-		return this.stackList.get(ids[par1]);
-	}
-	/**
-	 * Returns the stack in slot i
-	 */
-	public ItemStack getStackInSlot(String par1) {
-		return this.stackList.get(par1);
+		return this.stackMap.get(ids[par1]);
 	}
 	
 	public void updatePage(int page) {
@@ -95,9 +146,9 @@ public class InventoryEquipment implements IInventory {
 	 */
 	@Override
 	public ItemStack getStackInSlotOnClosing(int par1) {
-		if (this.stackList.get(ids[par1]) != null) {
-			ItemStack itemstack = this.stackList.get(ids[par1]);
-			this.stackList.put(ids[par1], null);
+		if (this.stackMap.get(ids[par1]) != null) {
+			ItemStack itemstack = this.stackMap.get(ids[par1]);
+			this.stackMap.put(ids[par1], null);
 			return itemstack;
 		} else {
 			return null;
@@ -110,33 +161,33 @@ public class InventoryEquipment implements IInventory {
 	 */
 	@Override
 	public ItemStack decrStackSize(int par1, int par2) {
-		if (this.stackList.get(ids[par1]) != null) {
+		if (this.stackMap.get(ids[par1]) != null) {
 			ItemStack itemstack;
 
-			if (this.stackList.get(ids[par1]).stackSize <= par2) {
-				itemstack = this.stackList.get(ids[par1]);
+			if (this.stackMap.get(ids[par1]).stackSize <= par2) {
+				itemstack = this.stackMap.get(ids[par1]);
 
 				if (itemstack != null && itemstack.getItem() instanceof IEquipment) {
 					((IEquipment) itemstack.getItem()).onUnequipped(itemstack,
 							player.get());
 				}
 				
-				this.stackList.put(ids[par1], null);
+				this.stackMap.put(ids[par1], null);
 
 				if (eventHandler != null)
 					this.eventHandler.onCraftMatrixChanged(this);
 				syncSlotToClients(par1);
 				return itemstack;
 			} else {
-				itemstack = this.stackList.get(ids[par1]).splitStack(par2);
+				itemstack = this.stackMap.get(ids[par1]).splitStack(par2);
 				
 				if (itemstack != null && itemstack.getItem() instanceof IEquipment) {
 					((IEquipment) itemstack.getItem()).onUnequipped(itemstack,
 							player.get());
 				}
 				
-				if (this.stackList.get(ids[par1]).stackSize == 0) {
-					this.stackList.put(ids[par1], null);
+				if (this.stackMap.get(ids[par1]).stackSize == 0) {
+					this.stackMap.put(ids[par1], null);
 				}
 				
 				if (eventHandler != null)
@@ -155,7 +206,7 @@ public class InventoryEquipment implements IInventory {
 	 */
 	@Override
 	public void setInventorySlotContents(int par1, ItemStack stack) {
-		this.stackList.put(ids[par1], stack);
+		this.stackMap.put(ids[par1], stack);
 		if (eventHandler != null)
 			this.eventHandler.onCraftMatrixChanged(this);
 		syncSlotToClients(par1);
@@ -217,11 +268,11 @@ public class InventoryEquipment implements IInventory {
 	public void saveNBT(NBTTagCompound tags) {
 		NBTTagList tagList = new NBTTagList();
 		NBTTagCompound invSlot;
-		for (String key : stackList.keySet()) {
-			if (this.stackList.get(key) != null) {
+		for (String key : stackMap.keySet()) {
+			if (this.stackMap.get(key) != null) {
 				invSlot = new NBTTagCompound();
 				invSlot.setString("Slot", key);
-				this.stackList.get(key).writeToNBT(invSlot);
+				this.stackMap.get(key).writeToNBT(invSlot);
 				tagList.appendTag(invSlot);
 			}
 		}
@@ -242,7 +293,7 @@ public class InventoryEquipment implements IInventory {
 			ItemStack itemstack = ItemStack
 					.loadItemStackFromNBT(nbttagcompound);
 			if (itemstack != null) {
-				this.stackList.put(slot, itemstack);
+				this.stackMap.put(slot, itemstack);
 			}
 		}
 //		for (int i = 0; i < tagList.tagCount(); ++i) {
@@ -259,11 +310,11 @@ public class InventoryEquipment implements IInventory {
 
 	public void dropItems(ArrayList<EntityItem> drops) {
 		for (int i = 0; i < 4; ++i) {
-			if (this.stackList.get(ids[i]) != null) {
+			if (this.stackMap.get(ids[i]) != null) {
 				EntityItem ei = new EntityItem(player.get().worldObj,
 						player.get().posX, player.get().posY
 								+ player.get().eyeHeight, player.get().posZ,
-						this.stackList.get(ids[i]).copy());
+						this.stackMap.get(ids[i]).copy());
 				ei.delayBeforeCanPickup = 40;
 				float f1 = player.get().worldObj.rand.nextFloat() * 0.5F;
 				float f2 = player.get().worldObj.rand.nextFloat()
@@ -272,18 +323,18 @@ public class InventoryEquipment implements IInventory {
 				ei.motionZ = (double) (MathHelper.cos(f2) * f1);
 				ei.motionY = 0.20000000298023224D;
 				drops.add(ei);
-				this.stackList.put(ids[i], null);
+				this.stackMap.put(ids[i], null);
 				syncSlotToClients(i);
 			}
 		}
 	}
 	
 	public void dropItemsAt(ArrayList<EntityItem> drops, Entity e) {
-		for (String id : this.stackList.keySet()) {
-			if (this.stackList.get(id) != null) {
+		for (String id : this.stackMap.keySet()) {
+			if (this.stackMap.get(id) != null) {
 				EntityItem ei = new EntityItem(e.worldObj,
 						e.posX, e.posY + e.getEyeHeight(), e.posZ,
-						this.stackList.get(id).copy());
+						this.stackMap.get(id).copy());
 				ei.delayBeforeCanPickup = 40;
 				float f1 = e.worldObj.rand.nextFloat() * 0.5F;
 				float f2 = e.worldObj.rand.nextFloat() * (float) Math.PI * 2.0F;
@@ -291,7 +342,7 @@ public class InventoryEquipment implements IInventory {
 				ei.motionZ = (double) (MathHelper.cos(f2) * f1);
 				ei.motionY = 0.20000000298023224D;
 				drops.add(ei);
-				this.stackList.put(id, null);
+				this.stackMap.put(id, null);
 				syncSlotToClients(id);
 			}
 		}

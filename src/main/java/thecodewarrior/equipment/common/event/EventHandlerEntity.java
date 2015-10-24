@@ -54,8 +54,8 @@ public class EventHandlerEntity {
 			}
 			
 			InventoryEquipment equipment = PlayerHandler.getPlayerEquipmentInventory(player);
-			for (String key : equipment.stackList.keySet()) {
-				ItemStack s = equipment.getStackInSlot(key);
+			for (String key : equipment.getStackMap().keySet()) {
+				ItemStack s = equipment.getStack(key);
 				if (s != null && s.getItem() instanceof IEquipment) {
 					((IEquipment) s.getItem()).onWornTick(s, player);
 				}

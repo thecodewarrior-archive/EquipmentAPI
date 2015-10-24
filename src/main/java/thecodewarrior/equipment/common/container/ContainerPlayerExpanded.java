@@ -37,7 +37,7 @@ public class ContainerPlayerExpanded extends Container
         equipment = new InventoryEquipment(player);
         equipment.setEventHandler(this);
         if (!player.worldObj.isRemote) {
-        	equipment.stackList = PlayerHandler.getPlayerEquipmentInventory(player).stackList;
+        	equipment.setStackMap( PlayerHandler.getPlayerEquipmentInventory(player).getRawStackMap() );
         }
         
         this.addSlotToContainer(new SlotCrafting(playerInv.player, this.craftMatrix, this.craftResult, 0, 144, 36));

@@ -1,5 +1,8 @@
 package thecodewarrior.equipment.common.container;
 
+import java.util.List;
+
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;

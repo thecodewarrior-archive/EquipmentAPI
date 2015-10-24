@@ -17,9 +17,9 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.0"
-group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+version = "0.1.0"
+group= "thecodewarrior.equipment" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "equipment"
 
 minecraft {
     version = "1.7.10-10.13.4.1448-1.7.10"
@@ -42,6 +42,8 @@ dependencies {
 
 }
 
+jar { exclude 'test/**' }
+
 processResources
 {
     // this will ensure that this task is redone when the versions change.
@@ -60,4 +62,29 @@ processResources
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+// Create deobf dev jars
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+// Create API library zip
+task apiZip(type: Zip) {
+    from(sourceSets.main.java) {
+        include "baubles/api/**"
+    }
+    classifier = 'api'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
+
+artifacts {
+    archives deobfJar
+    archives apiZip
+    archives sourcesJar
 }

@@ -20,7 +20,7 @@ public class EventHandlerNetwork {
 	
 	public static void syncEquipment(EntityPlayer player) {
 		InventoryEquipment i = PlayerHandler.getPlayerEquipmentInventory(player);
-		for (String key : i.stackList.keySet()) {
+		for (String key : i.getStackMap().keySet()) {
 			i.syncSlotToClients(key);
 		}
 	}

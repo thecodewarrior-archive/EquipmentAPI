@@ -34,7 +34,7 @@ public class PlayerHandler {
 			InventoryEquipment inventory = new InventoryEquipment(player);
 			playerEquipment.put(player.getCommandSenderName(), inventory);
 		}
-		return playerEquipment.get(player.getCommandSenderName()).getStackInSlot(id);
+		return playerEquipment.get(player.getCommandSenderName()).getStack(id);
 	}
 
 	public static void setPlayerEquipment(EntityPlayer player,

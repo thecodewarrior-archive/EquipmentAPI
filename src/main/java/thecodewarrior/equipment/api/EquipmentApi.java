@@ -2,6 +2,7 @@ package thecodewarrior.equipment.api;
 
 import java.lang.reflect.Method;
 
+import thecodewarrior.equipment.common.container.InventoryEquipment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -20,9 +21,9 @@ public class EquipmentApi
 	/**
 	 * Retrieves the equipment inventory for the supplied player
 	 */
-	public static IInventory getEquipment(EntityPlayer player)
+	public static InventoryEquipment getEquipment(EntityPlayer player)
 	{
-		IInventory ot = null;
+		InventoryEquipment ot = null;
 		
 	    try
 	    {
@@ -32,7 +33,7 @@ public class EquipmentApi
 	            getEquipmentInventory = fake.getMethod("getPlayerEquipmentInventory", EntityPlayer.class);
 	        }
 	        
-	        ot = (IInventory) getEquipmentInventory.invoke(null, player);
+	        ot = (InventoryEquipment) getEquipmentInventory.invoke(null, player);
 	    } 
 	    catch(Exception ex) 
 	    { 
@@ -54,7 +55,7 @@ public class EquipmentApi
 	            getEquipmentStack = fake.getMethod("getPlayerEquipment", EntityPlayer.class, String.class);
 	        }
 	        
-	        ot = (ItemStack) getEquipmentInventory.invoke(null, player, id);
+	        ot = (ItemStack) getEquipmentStack.invoke(null, player, id);
 	    } 
 	    catch(Exception ex) 
 	    { 

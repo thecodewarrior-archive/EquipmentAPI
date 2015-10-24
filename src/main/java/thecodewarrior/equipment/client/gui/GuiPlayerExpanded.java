@@ -1,5 +1,9 @@
 package thecodewarrior.equipment.client.gui;
 
+import java.util.Iterator;
+import java.util.List;
+
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
@@ -11,6 +15,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -23,6 +28,7 @@ import thecodewarrior.equipment.common.container.SlotEquipment;
 import thecodewarrior.equipment.common.network.PacketHandler;
 import thecodewarrior.equipment.common.network.PacketNextPage;
 import thecodewarrior.equipment.common.network.PacketPrevPage;
+
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 	
@@ -86,9 +92,20 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_)
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
         this.fontRendererObj.drawString(I18n.format("container.crafting", new Object[0]), 86, 16, 4210752);
+        if(this.mc.thePlayer.inventory.getItemStack() == null) {
+	        for(int i = 0; i < 8; i++) {
+	        	Slot slot = this.inventorySlots.getSlot(45+i);
+	        	if( slot instanceof SlotEquipment && ((SlotEquipment)slot).getType() != null && this.func_146978_c(slot.xDisplayPosition, slot.yDisplayPosition, 16, 16, mouseX, mouseY) ) {
+	        		List<String> list = ((SlotEquipment)slot).getType().getTooltip(slot.getStack(), this.mc.thePlayer);
+	
+	                if(list != null)
+	                	drawHoveringText(list, mouseX-guiLeft, mouseY-guiTop, fontRendererObj);
+	        	}
+	        }
+        }
     }
 
     /**
