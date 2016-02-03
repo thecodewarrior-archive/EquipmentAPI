@@ -89,12 +89,12 @@ public class EventHandlerEntity {
 		File file1, file2;
 		String fileName, fileNameBackup;
 		if (gamemode || !Config.isSplitSurvivalCreative()) {
-			fileName = "baub";
-			fileNameBackup = "baubback";
+			fileName = "equip";
+			fileNameBackup = "equipback";
 		}
 		else {
-			fileName = "baubs";
-			fileNameBackup = "baubsback";
+			fileName = "equips";
+			fileNameBackup = "equipsback";
 		}
 		
 		// look for normal files first
@@ -143,7 +143,7 @@ public class EventHandlerEntity {
     {
 		try {
 			File playersDirectory = new File(player.worldObj.getSaveHandler().getWorldDirectory(), "players");
-			return new File(playersDirectory, player.getCommandSenderName() + ".baub");
+			return new File(playersDirectory, player.getCommandSenderName() + ".equip");
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
     }
@@ -156,13 +156,13 @@ public class EventHandlerEntity {
 	private void playerSaveDo(EntityPlayer player, File directory, Boolean gamemode) {
 		if (gamemode || !Config.isSplitSurvivalCreative()) {
 			PlayerHandler.savePlayerEquipment(player, 
-					getPlayerFile("baub", directory, player.getCommandSenderName()), 
-					getPlayerFile("baubback", directory, player.getCommandSenderName()));
+					getPlayerFile("equip", directory, player.getCommandSenderName()), 
+					getPlayerFile("equipback", directory, player.getCommandSenderName()));
 		}
 		else {
 			PlayerHandler.savePlayerEquipment(player, 
-					getPlayerFile("baubs", directory, player.getCommandSenderName()), 
-					getPlayerFile("baubsback", directory, player.getCommandSenderName()));
+					getPlayerFile("equips", directory, player.getCommandSenderName()), 
+					getPlayerFile("equipsback", directory, player.getCommandSenderName()));
 		}
 	}
 
